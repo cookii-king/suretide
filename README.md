@@ -38,7 +38,7 @@ chmod +x setup-part-1.sh
 You can run this one line:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh && chmod +x setup-part-1.sh && ./setup-part-1.sh
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh && chmod +x setup-part-1.sh && bash setup-part-1.sh
 ```
 
 ## Troubleshooting
