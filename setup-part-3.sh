@@ -112,3 +112,14 @@ if [ -e "$BACKUP_KEY" ]; then
 else
   echo "backup.pem file not found." >> "${LOG_FILE}"
 fi
+
+
+# Stops specific services, where necessary
+echo "stopping rsync..." >> "${LOG_FILE}"
+sudo systemctl stop rsync >> "${LOG_FILE}"
+
+echo "starting rsync..." >> "${LOG_FILE}"
+sudo systemctl start rsync >> "${LOG_FILE}"
+
+echo "restarting rsync..." >> "${LOG_FILE}"
+sudo systemctl restart rsync >> "${LOG_FILE}"
