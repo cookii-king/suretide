@@ -76,12 +76,12 @@ fi
 # Create the MySQL dump file path
 MYSQL_FILE="$TEMPORARY_DIRECTORY/database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
 
-echo "🚦 🏁 Performing backup on $MYSQL_DATABASE database... 🏁 🚦" >> ${BASE_PATH}${$LOG_FILE}
-echo " ⚠️  Please ensure to update the IP address or domain URL of $MYSQL_DATABASE!! Or this script will not backup to your remote server. ⚠️" >> ${BASE_PATH}${$LOG_FILE}
+echo "🚦 🏁 Performing backup on $MYSQL_DATABASE database... 🏁 🚦" >> ${$LOG_FILE}
+echo " ⚠️  Please ensure to update the IP address or domain URL of $MYSQL_DATABASE!! Or this script will not backup to your remote server. ⚠️" >> ${$LOG_FILE}
 
-echo "Dumping MySQL database..." >> ${BASE_PATH}${$LOG_FILE}
-echo "Saved SQL file to $MYSQL_FILE." >> ${BASE_PATH}${$LOG_FILE}
+echo "Dumping MySQL database..." >> ${$LOG_FILE}
+echo "Saved SQL file to $MYSQL_FILE." >> ${$LOG_FILE}
 mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > "$MYSQL_FILE"
 
-echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}${$LOG_FILE}
-echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}${$LOG_FILE}
+echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${$LOG_FILE}
+echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${$LOG_FILE}
