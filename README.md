@@ -14,10 +14,10 @@ This script, `setup-part-1.sh`, is designed to help you easily upload a file to 
 1. Download and run the script from the GitHub repository in one line:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh | bash -s user@example.com /path/to/keypair.pem /path/to/file.txt
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh && chmod +x setup-part-1.sh && sudo bash setup-part-1.sh user@example.com /path/to/livekey.pem /path/to/backup.pem /path/to/file.txt
 ```
 
-Replace `user@example.com`, `/path/to/keypair.pem`, and `/path/to/file.txt` with your remote server's `username@ip`, the path to your keypair, and the path of the file you want to upload, respectively.
+Replace `user@example.com`, `/path/to/livekey.pem`, `/path/to/backup.pem`, and `/path/to/file.txt` with your remote server's `username@ip`, the path to your keypair, the path to your backup keypair, and the path of the file you want to upload, respectively.
 
 2. The script will test the connection to the remote server and upload the file to the `/home/username/system/` directory.
 
