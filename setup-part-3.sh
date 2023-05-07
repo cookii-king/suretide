@@ -4,7 +4,7 @@ BASE_PATH="/home/ubuntu/"
 SYSTEM_PATH="system/"
 LOG_FILE="${BASE_PATH}${SYSTEM_PATH}suretide.log"
 BACKUP_KEY="${BASE_PATH}${SYSTEM_PATH}backup.pem"
-TEMPORARY_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp"
+TEMPORARY_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp/"
 
 mkdir -p "$TEMPORARY_DIRECTORY"
 
@@ -62,19 +62,19 @@ MYSQL_USER="suretidewordpressuser"
 MYSQL_PASSWORD="@Rp!!T431"
 
 if [ ! -z "$2" ]; then
-  sed -i "s|MYSQL_DATABASE=\"suretidewordpress\"|MYSQL_DATABASE=\"$2\"|" backupscript.sh
+  sed -i "s|MYSQL_DATABASE=\"suretidewordpress\"|MYSQL_DATABASE=\"$2\"|" setup-part-3.sh
 fi
 
 if [ ! -z "$3" ]; then
-  sed -i "s|MYSQL_USER=\"suretidewordpressuser\"|MYSQL_USER=\"$3\"|" backupscript.sh
+  sed -i "s|MYSQL_USER=\"suretidewordpressuser\"|MYSQL_USER=\"$3\"|" setup-part-3.sh
 fi
 
 if [ ! -z "$4" ]; then
-  sed -i "s|MYSQL_PASSWORD=\"@Rp!!T431\"|MYSQL_PASSWORD=\"$4\"|" backupscript.sh
+  sed -i "s|MYSQL_PASSWORD=\"@Rp!!T431\"|MYSQL_PASSWORD=\"$4\"|" setup-part-3.sh
 fi
 
 # Create the MySQL dump file path
-MYSQL_FILE="$TEMPORARY_DIRECTORY/database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
+MYSQL_FILE="${TEMPORARY_DIRECTORY}database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
 
 echo "🚦 🏁 Performing backup on $MYSQL_DATABASE database... 🏁 🚦" >> ${$LOG_FILE}
 echo " ⚠️  Please ensure to update the IP address or domain URL of $MYSQL_DATABASE!! Or this script will not backup to your remote server. ⚠️" >> ${$LOG_FILE}
