@@ -21,8 +21,31 @@ function update_variables() {
 }
 
 function create_crontab() {
-    local script_path="$(realpath "$0")"
-    (crontab -l 2>/dev/null; echo "* * * * * /usr/bin/env bash -u ubuntu ${script_path} ${BACKUP_SERVER} ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD}") | crontab -
+    # Save the current crontab for the 'ubuntu' user to a temporary file
+    sudo crontab -u ubuntu -l > /tmp/c1
+
+    # Define the cron job line you want to add
+    CRON_JOB_LINE="* * * * * /usr/bin/env bash ${BASE_PATH}setup-part-3.sh ${BACKUP_SERVER} ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} >> ${LOG_FILE} 2>&1"
+
+    # Remove existing similar cron jobs
+    grep -v "${BASE_PATH}setup-part-3.sh" /tmp/c1 > /tmp/c2
+    mv /tmp/c2 /tmp/c1
+
+    echo "Checking if crontab has automation for this script..." >> ${LOG_FILE}
+    # Check if the cron job line is already in the crontab
+    if ! grep -qF "$CRON_JOB_LINE" /tmp/c1; then
+        # If it's not in the crontab, append it to the temporary file
+        echo "Adding crontab automation to this script..." >> ${LOG_FILE}
+        echo "$CRON_JOB_LINE" >> /tmp/c1
+
+        # Install the modified crontab from the temporary file for the 'ubuntu' user
+        sudo crontab -u ubuntu /tmp/c1
+    else
+        echo "The cron job is already in the crontab." >> ${LOG_FILE}
+    fi
+
+    # Clean up the temporary files
+    rm /tmp/c1
 }
 
 BASE_PATH="/home/ubuntu/"
