@@ -83,5 +83,5 @@ MYSQL_FILE="${TEMPORARY_DIRECTORY}database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_
 # echo "Saved SQL file to $MYSQL_FILE." >> ${LOG_FILE}
 # mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > "$MYSQL_FILE"
 
-echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${$LOG_FILE}
-echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${$LOG_FILE}
+echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> "${$LOG_FILE}"
+echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "${$LOG_FILE}"
