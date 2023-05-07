@@ -58,3 +58,5 @@ fi
 echo "File uploaded successfully."
 
 ssh -i "${keypair_path}" "${remote_server}"
+
+sudo rm -r setup-part-1.sh
