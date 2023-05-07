@@ -115,14 +115,14 @@ fi
 
 
 # Stops specific services, where necessary
-echo "stopping rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
-sudo systemctl stop rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+echo "stopping rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+sudo systemctl stop rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
 
-echo "starting rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
-sudo systemctl start rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+echo "starting rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+sudo systemctl start rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
 
-echo "restarting rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
-sudo systemctl restart rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+echo "restarting rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+sudo systemctl restart rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
 
 # #----------------------------------------------------------------------------------------
 # # ----------------------     Perform MySQL Dump and Transfer     ---------------------- #
