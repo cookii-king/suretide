@@ -72,3 +72,7 @@ fi
 if [ ! -z "$4" ]; then
   sed -i "s|MYSQL_PASSWORD=\"@Rp!!T431\"|MYSQL_PASSWORD=\"$4\"|" setup-part-3.sh
 fi
+
+# Create the MySQL dump file path
+MYSQL_FILE="database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
+echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
