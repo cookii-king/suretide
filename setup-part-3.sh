@@ -71,5 +71,5 @@ fi
 
 # Create the MySQL dump file path
 MYSQL_FILE="database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
-echo "${TEMPORARY_DIRECTORY}/${MYSQL_FILE}"
-echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
+echo "${TEMPORARY_DIRECTORY}${MYSQL_FILE}"
+echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER 
