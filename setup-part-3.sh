@@ -4,11 +4,7 @@ BASE_PATH="/home/ubuntu/"
 SYSTEM_PATH="system/"
 LOG_FILE="${BASE_PATH}${SYSTEM_PATH}suretide.log"
 BACKUP_KEY="${BASE_PATH}${SYSTEM_PATH}backup.pem"
-TEMPORARY_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp/to/yup"
-
-mkdir -p "$TEMPORARY_DIRECTORY"
-
-echo "TEMPORARY_DIRECTORY: $TEMPORARY_DIRECTORY"
+TEMPORARY_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp/"
 
 function valid_ip() {
   local ip=$1
@@ -75,4 +71,5 @@ fi
 
 # Create the MySQL dump file path
 MYSQL_FILE="database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
+echo "${TEMPORARY_DIRECTORY}/${MYSQL_FILE}"
 echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
