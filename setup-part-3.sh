@@ -107,22 +107,22 @@ if [ -e "$BACKUP_KEY" ]; then
   # Check if the permissions are not 400 or 600
   if [ "$file_permissions" != "400" ] && [ "$file_permissions" != "600" ]; then
     chmod 400 "$BACKUP_KEY"
-    echo "File permissions for backup.pem have been changed to 400." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+    echo "File permissions for backup.pem have been changed to 400." >> "${LOG_FILE}"
   fi
 else
-  echo "backup.pem file not found." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+  echo "backup.pem file not found." >> "${LOG_FILE}"
 fi
 
 
 # Stops specific services, where necessary
-echo "stopping rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
-sudo systemctl stop rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+echo "stopping rsync..." >> "${LOG_FILE}"
+sudo systemctl stop rsync >> "${LOG_FILE}"
 
-echo "starting rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
-sudo systemctl start rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+echo "starting rsync..." >> "${LOG_FILE}"
+sudo systemctl start rsync >> "${LOG_FILE}"
 
-echo "restarting rsync..." >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
-sudo systemctl restart rsync >> "${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}"
+echo "restarting rsync..." >> "${LOG_FILE}"
+sudo systemctl restart rsync >> "${LOG_FILE}"
 
 # #----------------------------------------------------------------------------------------
 # # ----------------------     Perform MySQL Dump and Transfer     ---------------------- #
