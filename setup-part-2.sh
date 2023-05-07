@@ -106,7 +106,7 @@ sudo systemctl restart nginx
 
 sudo chown -R www-data:www-data /var/www
 
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $bs_username $db_name $db_user $db_password
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh "$bs_username" "$db_name" "$db_user" "$db_password"
 
 sudo rm -r setup-part-3.sh
 echo "done ✅ ∙ to get rid of error just setup your wordpres and update the backup script to your liking..."
