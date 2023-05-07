@@ -96,57 +96,33 @@ entry_length=${#LOG_ENTRY_DATE_TIME}
 # Calculate the number of spaces needed to center the text
 spaces=$(( (line_length - entry_length) / 2 ))
 
-#---------------------------------------------------------------------------
-# ----------------------     Start of Log Entry     ---------------------- #
-#---------------------------------------------------------------------------
-
 printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " START OF LOG ENTRY " >> $LOG_FILE; printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo >> $LOG_FILE
 printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TIME " >> $LOG_FILE; printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo >> $LOG_FILE
 
-# #---------------------------------------------------------------------------------------------
-# # ----------------------     Check and Create Temporary Directory     ---------------------- #
-# #---------------------------------------------------------------------------------------------
+# Check if the backup.pem file exists
+if [ -e "$BACKUP_KEY" ]; then
+  # Get the file permissions
+  file_permissions=$(stat -c "%a" "$BACKUP_KEY")
 
-# # Check if the temporary directory exists
-# if [ ! -d "$TEMPORARY_DIRECTORY" ]; then
-#   # If it doesn't exist, create the directory
-#   mkdir -p "$TEMPORARY_DIRECTORY"
-#   echo "Created temporary directory: $TEMPORARY_DIRECTORY" >> ${BASE_PATH}backupscript.log
-# else
-#   echo "Temporary directory already exists: $TEMPORARY_DIRECTORY" >> ${BASE_PATH}backupscript.log
-# fi
+  # Check if the permissions are not 400 or 600
+  if [ "$file_permissions" != "400" ] && [ "$file_permissions" != "600" ]; then
+    chmod 400 "$BACKUP_KEY"
+    echo "File permissions for backup.pem have been changed to 400." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+  fi
+else
+  echo "backup.pem file not found." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+fi
 
-# #---------------------------------------------------------------------------------------------
-# # ----------------------     Check and Set Backup Key Permissions     ---------------------- #
-# #---------------------------------------------------------------------------------------------
 
-# # Check if the backup.pem file exists
-# if [ -e "$BACKUP_KEY" ]; then
-#   # Get the file permissions
-#   file_permissions=$(stat -c "%a" "$BACKUP_KEY")
+# Stops specific services, where necessary
+echo "stopping rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+sudo systemctl stop rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
 
-#   # Check if the permissions are not 400 or 600
-#   if [ "$file_permissions" != "400" ] && [ "$file_permissions" != "600" ]; then
-#     chmod 400 "$BACKUP_KEY"
-#     echo "File permissions for backup.pem have been changed to 400." >> ${BASE_PATH}backupscript.log
-#   fi
-# else
-#   echo "backup.pem file not found." >> ${BASE_PATH}backupscript.log
-# fi
+echo "starting rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+sudo systemctl start rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
 
-# #-----------------------------------------------------------------------------------------------
-# # ----------------------     Stop, Start, and Restart Rsync Service     ---------------------- #
-# #-----------------------------------------------------------------------------------------------
-
-# # Stops specific services, where necessary
-# echo "stopping rsync..." >> ${BASE_PATH}backupscript.log
-# sudo systemctl stop rsync >> ${BASE_PATH}backupscript.log
-
-# echo "starting rsync..." >> ${BASE_PATH}backupscript.log
-# sudo systemctl start rsync >> ${BASE_PATH}backupscript.log
-
-# echo "restarting rsync..." >> ${BASE_PATH}backupscript.log
-# sudo systemctl restart rsync >> ${BASE_PATH}backupscript.log
+echo "restarting rsync..." >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
+sudo systemctl restart rsync >> ${BASE_PATH}${SYSTEM_PATH}${$LOG_FILE}
 
 # #----------------------------------------------------------------------------------------
 # # ----------------------     Perform MySQL Dump and Transfer     ---------------------- #
@@ -173,15 +149,15 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TI
 # # Create the MySQL dump file path
 # MYSQL_FILE="$TEMPORARY_DIRECTORY/database_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
 
-# echo "🚦 🏁 Performing backup on $MYSQL_DATABASE database... 🏁 🚦" >> ${BASE_PATH}backupscript.log
-# echo " ⚠️  Please ensure to update the IP address or domain URL of $MYSQL_DATABASE!! Or this script will not backup to your remote server. ⚠️" >> ${BASE_PATH}backupscript.log
+# echo "🚦 🏁 Performing backup on $MYSQL_DATABASE database... 🏁 🚦" >> ${BASE_PATH}${$LOG_FILE}
+# echo " ⚠️  Please ensure to update the IP address or domain URL of $MYSQL_DATABASE!! Or this script will not backup to your remote server. ⚠️" >> ${BASE_PATH}${$LOG_FILE}
 
-# echo "Dumping MySQL database..." >> ${BASE_PATH}backupscript.log
-# echo "Saved SQL file to $MYSQL_FILE." >> ${BASE_PATH}backupscript.log
+# echo "Dumping MySQL database..." >> ${BASE_PATH}${$LOG_FILE}
+# echo "Saved SQL file to $MYSQL_FILE." >> ${BASE_PATH}${$LOG_FILE}
 # mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > "$MYSQL_FILE"
 
-# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}backupscript.log
-# echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}backupscript.log
+# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}${$LOG_FILE}
+# echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}${$LOG_FILE}
 
 # #----------------------------------------------------------------------------------------------------
 # # ----------------------     Save Latest WordPress Tar File and Transfer     ---------------------- #
@@ -198,13 +174,13 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TI
 # # Create the WordPress tar file path
 # WORDPRESS_DIRECTORY_TAR_FILE="$TEMPORARY_DIRECTORY/wordpress_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").tar.gz"
 
-# echo "🚦 🏁 Performing backup on $WORDPRESS_DIRECTORY directory... 🏁 🚦" >> ${BASE_PATH}backupscript.log
-# echo "Creating tar archive..." >> ${BASE_PATH}backupscript.log
-# echo "Saved tar file to $WORDPRESS_DIRECTORY_TAR_FILE." >> ${BASE_PATH}backupscript.log
+# echo "🚦 🏁 Performing backup on $WORDPRESS_DIRECTORY directory... 🏁 🚦" >> ${BASE_PATH}${$LOG_FILE}
+# echo "Creating tar archive..." >> ${BASE_PATH}${$LOG_FILE}
+# echo "Saved tar file to $WORDPRESS_DIRECTORY_TAR_FILE." >> ${BASE_PATH}${$LOG_FILE}
 # tar -czf "$WORDPRESS_DIRECTORY_TAR_FILE" "$WORDPRESS_DIRECTORY"
 
-# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}backupscript.log
-# echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}backupscript.log
+# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}${$LOG_FILE}
+# echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}${$LOG_FILE}
 
 # #-------------------------------------------------------------------------------------------------------
 # # ----------------------     Save Latest Nginx Config Tar File and Transfer     ---------------------- #
@@ -221,13 +197,13 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TI
 # # Create the Nginx tar file path
 # NGINX_DIRECTORY_TAR_FILE="$TEMPORARY_DIRECTORY/nginx_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").tar.gz"
 
-# echo "🚦 🏁 Performing backup on $NGINX_DIRECTORY directory... 🏁 🚦" >> ${BASE_PATH}backupscript.log
-# echo "Creating tar archive..." >> ${BASE_PATH}backupscript.log
-# echo "Saved tar file to $NGINX_DIRECTORY_TAR_FILE." >> ${BASE_PATH}backupscript.log
+# echo "🚦 🏁 Performing backup on $NGINX_DIRECTORY directory... 🏁 🚦" >> ${BASE_PATH}${$LOG_FILE}
+# echo "Creating tar archive..." >> ${BASE_PATH}${$LOG_FILE}
+# echo "Saved tar file to $NGINX_DIRECTORY_TAR_FILE." >> ${BASE_PATH}${$LOG_FILE}
 # tar -czf "$NGINX_DIRECTORY_TAR_FILE" "$NGINX_DIRECTORY"
 
-# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}backupscript.log
-# echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}backupscript.log
+# echo "Using SFTP to transfer the file from this local server at http://$(curl ifconfig.me) to your remote server at http://$BACKUP_SERVER." >> ${BASE_PATH}${$LOG_FILE}
+# echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> ${BASE_PATH}${$LOG_FILE}
 
 # #------------------------------------------------------------------------------------
 # # ----------------------     Add Cron Job for Automation     ---------------------- #
@@ -237,23 +213,23 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TI
 # sudo crontab -u ubuntu -l > /tmp/c1
 
 # # Define the cron job line you want to add
-# CRON_JOB_LINE=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}backupscript.sh >> ${BASE_PATH}backupscript.log 2>&1"
+# CRON_JOB_LINE=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}backupscript.sh >> ${BASE_PATH}${$LOG_FILE} 2>&1"
 
 # # Remove existing similar cron jobs
 # grep -v "${BASE_PATH}backupscript.sh" /tmp/c1 > /tmp/c2
 # mv /tmp/c2 /tmp/c1
 
-# echo "Checking if crontab has automation for this script..." >> ${BASE_PATH}backupscript.log
+# echo "Checking if crontab has automation for this script..." >> ${BASE_PATH}${$LOG_FILE}
 # # Check if the cron job line is already in the crontab
 # if ! grep -qF "$CRON_JOB_LINE" /tmp/c1; then
 #   # If it's not in the crontab, append it to the temporary file
-#   echo "Adding crontab automation to this script..." >> ${BASE_PATH}backupscript.log
+#   echo "Adding crontab automation to this script..." >> ${BASE_PATH}${$LOG_FILE}
 #   echo "$CRON_JOB_LINE" >> /tmp/c1
 
 #   # Install the modified crontab from the temporary file for the 'ubuntu' user
 #   sudo crontab -u ubuntu /tmp/c1
 # else
-#   echo "The cron job is already in the crontab." >> ${BASE_PATH}backupscript.log
+#   echo "The cron job is already in the crontab." >> ${BASE_PATH}${$LOG_FILE}
 # fi
 
 # # Clean up the temporary files
@@ -263,9 +239,9 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TI
 # # ----------------------     Remove Temporary Directory and End of Log Entry     ---------------------- #
 # #--------------------------------------------------------------------------------------------------------
 
-# echo "removing temp directory..." >> ${BASE_PATH}backupscript.log
-# sudo rm -r $TEMPORARY_DIRECTORY >> ${BASE_PATH}backupscript.log
+# echo "removing temp directory..." >> ${BASE_PATH}${$LOG_FILE}
+# sudo rm -r $TEMPORARY_DIRECTORY >> ${BASE_PATH}${$LOG_FILE}
 
-# printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo -n " END OF LOG ENTRY " >> ${BASE_PATH}backupscript.log; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
-# printf '%.0s*' $(seq 1 $line_length) >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
-# printf '%.0s*' $(seq 1 $line_length) >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backup
+# printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}${$LOG_FILE}; echo -n " END OF LOG ENTRY " >> ${BASE_PATH}${$LOG_FILE}; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}${$LOG_FILE}; echo >> ${BASE_PATH}${$LOG_FILE}
+# printf '%.0s*' $(seq 1 $line_length) >> ${BASE_PATH}${$LOG_FILE}; echo >> ${BASE_PATH}${$LOG_FILE}
+# printf '%.0s*' $(seq 1 $line_length) >> ${BASE_PATH}${$LOG_FILE}; echo >> ${BASE_PATH}backup
