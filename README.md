@@ -1,6 +1,6 @@
 # Suretide Setup Part 1
 
-This script, `setup-part-1.sh`, is designed to help you easily upload a file to a remote server using either a `.pem` or `.ppk` keypair. The script will automatically set the destination path to `/home/username/system/` on the remote server.
+This script, `setup-part-1.sh`, is designed to help you easily upload a file to a remote server using either a `.pem` or `.ppk` keypair. The script will automatically set the destination path to `/home/username/` on the remote server.
 
 ## Prerequisites
 
@@ -11,17 +11,35 @@ This script, `setup-part-1.sh`, is designed to help you easily upload a file to 
 
 ## Usage
 
-1. Download and run the script from the GitHub repository in one line:
+1. Download the script from the GitHub repository and save it as `setup-part-1.sh`:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh && chmod +x setup-part-1.sh && sudo bash setup-part-1.sh user@example.com /path/to/livekey.pem /path/to/backup.pem /path/to/file.txt
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh
 ```
 
-Replace `user@example.com`, `/path/to/livekey.pem`, `/path/to/backup.pem`, and `/path/to/file.txt` with your remote server's `username@ip`, the path to your keypair, the path to your backup keypair, and the path of the file you want to upload, respectively.
+2. Make the script executable:
 
-2. The script will test the connection to the remote server and upload the file to the `/home/username/system/` directory.
+```bash
+chmod +x setup-part-1.sh
+```
 
-3. If the file upload is successful, the script will establish an SSH connection to the remote server.
+3. Run the script:
+
+```bash
+./setup-part-1.sh
+```
+
+4. Follow the prompts to enter the remote server's `username@ip`, the path to your keypair, the path of the file you want to upload, and the destination path on the remote server.
+
+5. The script will test the connection to the remote server and upload the file to the specified destination path.
+
+6. If the file upload is successful, the script will establish an SSH connection to the remote server.
+
+You can run this one line:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-1.sh -o setup-part-1.sh && chmod +x setup-part-1.sh && ./setup-part-1.sh
+```
 
 ## Troubleshooting
 
