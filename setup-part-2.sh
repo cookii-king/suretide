@@ -1,5 +1,23 @@
 #!/bin/bash
 
+# Get the current user
+current_user="$(whoami)"
+
+# Check if the current user is already an admin
+if groups "$current_user" | grep -q "\bsudo\b"; then
+    echo "$current_user is already an admin."
+else
+    echo "$current_user is not an admin. Granting admin privileges..."
+    if [ "$current_user" != "root" ]; then
+        # Add the current user to the sudo group
+        sudo usermod -aG sudo "$current_user"
+        echo "$current_user has been granted admin privileges."
+    else
+        echo "You are logged in as root. No need to grant admin privileges."
+    fi
+fi
+
+
 # Set default values
 db_name=""
 db_user=""
