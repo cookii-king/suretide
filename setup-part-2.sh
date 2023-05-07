@@ -113,7 +113,7 @@ sudo chown -R www-data:www-data /var/www
 
 curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh "$bs_username" "$db_name" "$db_user" "$db_password"
 
-sudo mv setup-part-3.sh "${SYSTEM_PATH}setup-part-3.sh"
+sudo mv setup-part-3.sh "${SYSTEM_PATH}backup.sh"
 
 sudo rm -r setup-part-2.sh
 echo "done ✅ ∙ to get rid of error just setup your wordpres and update the backup script to your liking..."
