@@ -10,14 +10,19 @@ read keypair_path
 echo "Enter the path of the file you want to upload:"
 read file_path
 
-echo "Enter the destination path on the remote server (e.g. /home/user/destination) or leave it empty for default (/home/username/):"
-read remote_destination
+# echo "Enter the destination path on the remote server (e.g. /home/user/destination) or leave it empty for default (/home/username/):"
+# read remote_destination
+
+remote_destination=""
 
 # If the destination path is empty, use /home/username/
-if [ -z "$remote_destination" ]; then
-    username=$(echo "$remote_server" | cut -d '@' -f 1)
-    remote_destination="/home/${username}/"
-fi
+# if [ -z "$remote_destination" ]; then
+#     username=$(echo "$remote_server" | cut -d '@' -f 1)
+#     remote_destination="/home/${username}/"
+# fi
+
+username=$(echo "$remote_server" | cut -d '@' -f 1)
+remote_destination="/home/${username}/system/"
 
 # Check if the keypair is .pem or .ppk
 key_ext="${keypair_path##*.}"
