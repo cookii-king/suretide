@@ -94,7 +94,7 @@ chmod +x setup-part-2.sh
 You can run this one line:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-2.sh -o setup-part-2.sh && chmod +x setup-part-2.sh && bash setup-part-2.sh
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-2.sh -o setup-part-2.sh && sudo chmod +x setup-part-2.sh && sudo bash setup-part-2.sh
 ```
 
 ## Troubleshooting
