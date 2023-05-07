@@ -97,7 +97,7 @@ entry_length=${#LOG_ENTRY_DATE_TIME}
 spaces=$(( (line_length - entry_length) / 2 ))
 
 printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " START OF LOG ENTRY " >> $LOG_FILE; printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo >> $LOG_FILE
-printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " START OF LOG ENTRY " >> $LOG_FILE; printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo >> $LOG_FILE
+printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo -n " $LOG_ENTRY_DATE_TIME " >> $LOG_FILE; printf '%*.s' $spaces '' | tr ' ' '-' >> $LOG_FILE; echo >> $LOG_FILE
 
 # Check if the backup.pem file exists
 if [ -e "$BACKUP_KEY" ]; then
