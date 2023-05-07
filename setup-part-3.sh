@@ -19,7 +19,7 @@ ENVIRONMENT_SHELL="/bin/bash"
 LINE_LENGTH=$(/usr/bin/tput cols)
 CURRENT_USER="$(whoami)"
 # Set the base path for the script
-BASE_PATH="/home/${CURRENT_USER}/"
+BASE_PATH="/home/ubuntu/"
 # Set the system folder path
 SYSTEM_PATH="system/"
 
