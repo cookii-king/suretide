@@ -27,3 +27,64 @@ SYSTEM_PATH="system/"
 LOG_FILE="${BASE_PATH}${SYSTEM_PATH}suretide.log"
 printf '%.0s*' $(seq 1 $LINE_LENGTH) >> $LOG_FILE; echo >> $LOG_FILE
 printf '%.0s*' $(seq 1 $LINE_LENGTH) >> $LOG_FILE; echo >> $LOG_FILE
+
+# # Set the backup key file path
+BACKUP_KEY="${BASE_PATH}${SYSTEM_PATH}backup.pem"
+# Set the temporary directory path
+TEMPORARY_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp"
+
+# Create the temporary directory if it does not exist
+mkdir -p "$TEMPORARY_DIRECTORY"
+
+# Check if the temporary directory exists
+if [ -d "$TEMPORARY_DIRECTORY" ]; then
+    echo "$TEMPORARY_DIRECTORY"
+else
+    echo "Failed to create temporary directory."
+fi
+
+# Set the backup server
+BACKUP_SERVER=""
+
+# Function to validate an IP address
+function valid_ip() {
+  local ip=$1
+  local stat=1
+
+  if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+    OIFS=$IFS
+    IFS='.'
+    ip=($ip)
+    IFS=$OIFS
+    [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+    stat=$?
+  fi
+  return $stat
+}
+
+if [ ! -z "$1" ]; then
+  input="$1"
+  # Remove username if present
+  if [[ $input == *"@"* ]]; then
+    input="${input#*@}"
+  fi
+
+  # Remove https:// if present
+  if [[ $input == "https://"* ]]; then
+    input="${input#https://}"
+  fi
+
+    # Remove http:// if present
+  if [[ $input == "http://"* ]]; then
+    input="${input#http://}"
+  fi
+
+  if valid_ip "$input" || host "$input" > /dev/null 2>&1; then
+    # Update the BACKUP_SERVER variable in the current script
+    sed -i "s|BACKUP_SERVER=\"\"|BACKUP_SERVER=\"$1\"|" $0
+    BACKUP_SERVER="$1"
+  else
+    echo "Error: Invalid IP address or hostname."
+    exit 1
+  fi
+fi
