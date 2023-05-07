@@ -88,3 +88,13 @@ if [ ! -z "$1" ]; then
     exit 1
   fi
 fi
+
+# Calculate the length of the LOG_ENTRY_DATE_TIME text
+LOG_ENTRY_DATE_TIME="$(date +"%Y-%m-%d %H:%M:%S")"
+entry_length=${#LOG_ENTRY_DATE_TIME}
+
+# Calculate the number of spaces needed to center the text
+spaces=$(( (line_length - entry_length) / 2 ))
+
+printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo -n " START OF LOG ENTRY " >> ${BASE_PATH}backupscript.log; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
+printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo -n " $LOG_ENTRY_DATE_TIME " >> ${BASE_PATH}backupscript.log; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
