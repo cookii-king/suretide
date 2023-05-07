@@ -98,3 +98,17 @@ spaces=$(( (line_length - entry_length) / 2 ))
 
 printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo -n " START OF LOG ENTRY " >> ${BASE_PATH}backupscript.log; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
 printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo -n " $LOG_ENTRY_DATE_TIME " >> ${BASE_PATH}backupscript.log; printf '%*.s' $spaces '' | tr ' ' '-' >> ${BASE_PATH}backupscript.log; echo >> ${BASE_PATH}backupscript.log
+
+# Check if the backup.pem file exists
+if [ -e "$BACKUP_KEY" ]; then
+  # Get the file permissions
+  file_permissions=$(stat -c "%a" "$BACKUP_KEY")
+
+  # Check if the permissions are not 400 or 600
+  if [ "$file_permissions" != "400" ] && [ "$file_permissions" != "600" ]; then
+    chmod 400 "$BACKUP_KEY"
+    echo "File permissions for backup.pem have been changed to 400." >> "${LOG_FILE}"
+  fi
+else
+  echo "backup.pem file not found." >> "${LOG_FILE}"
+fi
