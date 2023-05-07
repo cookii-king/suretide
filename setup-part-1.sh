@@ -1,21 +1,20 @@
 #!/bin/bash
 
-# Check if the required arguments are provided
-if [ $# -ne 3 ]; then
-    echo "Usage: $0 <remote_server> <keypair_path> <file_path>"
-    exit 1
-fi
+# Prompt the user for input
+echo "Enter the remote server's username@ip (e.g. user@example.com):"
+read remote_server
 
-# Extract the input from command line arguments
-remote_server="$1"
-keypair_path="$2"
-file_path="$3"
+echo "Enter the path to the server's .pem or .ppk keypair:"
+read keypair_path
 
-# Extract the username from the remote server's input
+echo "Enter the path of the file you want to upload:"
+read file_path
+
+remote_destination
+
 username=$(echo "$remote_server" | cut -d '@' -f 1)
-
-# Set the destination path to the default /home/username/system/
 remote_destination="/home/${username}/system/"
+
 
 # Check if the keypair is .pem or .ppk
 key_ext="${keypair_path##*.}"
