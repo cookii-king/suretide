@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the current user
-current_user="$(whoami)"
+current_user="ubuntu"
 
 # Check if the current user is already an admin
 if groups "$current_user" | grep -q "\bsudo\b"; then
