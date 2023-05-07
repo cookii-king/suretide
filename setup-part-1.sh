@@ -10,11 +10,11 @@ if [ $# -eq 0 ]; then
     read -p "Enter the remote destination: " remote_destination
 else
     # Use provided arguments
-    remote_server=$1
-    keypair_path=$2
-    backup_keypair_path=$3
-    file_path=$4
-    remote_destination=$5
+    remote_server="$1"
+    keypair_path="$2"
+    backup_keypair_path="$3"
+    file_path="$4"
+    remote_destination="$5"
 fi
 
 # Check if keypair files exist
@@ -30,11 +30,11 @@ backup_key_ext=$(echo "${backup_keypair_path##*.}")
 # Transfer files using rsync
 if [ "$key_ext" == "pem" ]; then
     # Use rsync with .pem keypair
-    rsync -avz -e "ssh -i \"${keypair_path}\"" "${file_path}" "${remote_server}:${remote_destination}"
+    rsync -avz -e "ssh -i \"$keypair_path\"" "$file_path" "$remote_server:$remote_destination"
 elif [ "$key_ext" == "ppk" ]; then
     # Use rsync with .ppk keypair (assuming ssh-pageant is installed and configured)
-    eval $(ssh-pageant -k "${keypair_path}")
-    rsync -avz -e "ssh" "${file_path}" "${remote_server}:${remote_destination}"
+    eval $(ssh-pageant -k "$keypair_path")
+    rsync -avz -e "ssh" "$file_path" "$remote_server:$remote_destination"
 else
     echo "Error: Unsupported keypair file extension."
     exit 1
@@ -43,11 +43,11 @@ fi
 # Transfer files to backup server
 if [ "$backup_key_ext" == "pem" ]; then
     # Use rsync with .pem keypair
-    rsync -avz -e "ssh -i \"${backup_keypair_path}\"" "${file_path}" "${remote_server}:${remote_destination}"
+    rsync -avz -e "ssh -i \"$backup_keypair_path\"" "$file_path" "$remote_server:$remote_destination"
 elif [ "$backup_key_ext" == "ppk" ]; then
     # Use rsync with .ppk keypair (assuming ssh-pageant is installed and configured)
-    eval $(ssh-pageant -k "${backup_keypair_path}")
-    rsync -avz -e "ssh" "${file_path}" "${remote_server}:${remote_destination}"
+    eval $(ssh-pageant -k "$backup_keypair_path")
+    rsync -avz -e "ssh" "$file_path" "$remote_server:$remote_destination"
 else
     echo "Error: Unsupported backup keypair file extension."
     exit 1
