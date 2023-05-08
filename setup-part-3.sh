@@ -2,7 +2,6 @@
 BACKUP_SERVER=""
 MYSQL_DATABASE=""
 MYSQL_USER=""
-# MYSQL_PASSWORD="$4"
 MYSQL_PASSWORD=""
 MYSQL_FILE="/home/ubuntu/system/backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").sql"
 LOG_FILE="/home/ubuntu/system/suretide.log"
