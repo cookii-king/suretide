@@ -1,68 +1,44 @@
 #!/bin/bash
 
-# Get the current user
-current_user="ubuntu"
-
-# # Check if the current user is already an admin
-# if groups "$current_user" | grep -q "\bsudo\b"; then
-#     echo "$current_user is already an admin."
-# else
-#     echo "$current_user is not an admin. Granting admin privileges..."
-#     if [ "$current_user" != "root" ]; then
-#         # Add the current user to the sudo group
-#         sudo usermod -aG sudo "$current_user"
-#         echo "$current_user has been granted admin privileges."
-#     else
-#         echo "You are logged in as root. No need to grant admin privileges."
-#     fi
-# fi
-
-# Set the base path for the script
-BASE_PATH="/home/${current_user}/"
-# Set the system folder path
-SYSTEM_PATH="system/"
-
-sudo chmod 400 "${BASE_PATH}${SYSTEM_PATH}backup.pem"
+sudo chmod 400 "/home/ubuntu/system/backup.pem"
 
 # Set default values
-db_name=""
-db_user=""
-db_password=""
-bs_username=""
+BACKUP_SERVER=""
+MYSQL_DATABASE=""
+MYSQL_USER=""
+MYSQL_PASSWORD=""
 
 # Check if command line arguments are provided
 if [ ! -z "$1" ]; then
-  db_name="$1"
+  MYSQL_DATABASE="$1"
 else
-  read -p "Enter database name: " db_name
+  read -p "Enter database name: " MYSQL_DATABASE
 fi
 
 if [ ! -z "$2" ]; then
-  db_user="$2"
+  MYSQL_USER="$2"
 else
-  read -p "Enter database user: " db_user
+  read -p "Enter database user: " MYSQL_USER
 fi
 
 if [ ! -z "$3" ]; then
-  db_password="$3"
+  MYSQL_PASSWORD="$3"
 else
-  read -sp "Enter database password: " db_password
+  read -sp "Enter database password: " MYSQL_PASSWORD
   echo ""
 fi
 
 if [ ! -z "$4" ]; then
-  bs_username="$4"
+  BACKUP_SERVER="$4"
 else
-  read -p "Enter backup server username: " bs_username
+  read -p "Enter backup server username: " BACKUP_SERVER
 fi
 
 sudo apt update -y
-sudo apt install tree -y
 sudo apt install nginx -y
 sudo apt install software-properties-common -y
 sudo apt install mysql-server -y
 sudo apt install mysql-client -y
-sudo apt install vsftpd -y
 sudo add-apt-repository ppa:ondrej/php -y
 sudo apt install php8.1 -y
 sudo apt install php8.1-fpm -y
@@ -74,9 +50,9 @@ sudo mv /var/www/html/index.nginx-debian.html /var/www/html/index.html
 sudo cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
 ls /var/www/html/wordpress
 
-sudo sed -i "s/define( 'DB_NAME', 'database_name_here' );/define( 'DB_NAME', '$db_name' );/g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s/define( 'DB_USER', 'username_here' );/define( 'DB_USER', '$db_user' );/g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s/define( 'DB_PASSWORD', 'password_here' );/define( 'DB_PASSWORD', '$db_password' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'MYSQL_DATABASE', 'database_name_here' );/define( 'MYSQL_DATABASE', '$MYSQL_DATABASE' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'MYSQL_USER', 'username_here' );/define( 'MYSQL_USER', '$MYSQL_USER' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'MYSQL_PASSWORD', 'password_here' );/define( 'MYSQL_PASSWORD', '$MYSQL_PASSWORD' );/g" /var/www/html/wordpress/wp-config.php
 
 config_file="/var/www/html/wordpress/wp-config.php"
 
@@ -102,10 +78,10 @@ sudo sed -i -e '56, 61 s/#//' -e '63 s/#//' /etc/nginx/sites-available/default
 
 # Create the database, user, and grant privileges
 sudo mysql <<EOF
-CREATE DATABASE $db_name DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password';
-GRANT ALL ON $db_name.* TO '$db_user'@'localhost';
-GRANT SELECT, SHOW VIEW, RELOAD, REPLICATION CLIENT, LOCK TABLES, PROCESS ON *.* TO '$db_user'@'localhost';
+CREATE DATABASE $MYSQL_DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE USER '$MYSQL_USER'@'localhost' IDENTIFIED BY '$MYSQL_PASSWORD';
+GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'localhost';
+GRANT SELECT, SHOW VIEW, RELOAD, REPLICATION CLIENT, LOCK TABLES, PROCESS ON *.* TO '$MYSQL_USER'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 EOF
@@ -114,14 +90,15 @@ sudo systemctl restart nginx
 
 sudo chown -R www-data:www-data /var/www
 
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $db_name $db_user $db_password $bs_username
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $BACKUP_SERVER
 
-sudo mv setup-part-3.sh "${SYSTEM_PATH}backup.sh"
+sudo mv setup-part-3.sh "/home/ubuntu/system/backup.sh"
 
 curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/diagnostics.sh -o diagnostics.sh && sudo chmod +x diagnostics.sh
 
-sudo mv diagnostics.sh "${SYSTEM_PATH}diagnostics.sh"
+sudo mv diagnostics.sh "/home/ubuntu/system/diagnostics.sh"
 
-sudo rm -r setup-part-2.sh
+sudo rm -r "/home/ubuntu/system/setup-part-2.sh"
+
 echo "done ✅ ∙ to get rid of error just setup your wordpres and update the backup script to your liking..."
 echo "go to http://$(curl ifconfig.me) to see finish setting up your wordpress website. 😁"
