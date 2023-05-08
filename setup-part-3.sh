@@ -19,11 +19,26 @@ SFTP_LINE="/usr/bin/sftp"
 
 mkdir -p $BASE_PATH$SYSTEM_PATH
 
-mkdir $TEMP_DIRECTORY
+mkdir -p $TEMP_DIRECTORY
 
 if [ "$#" -ne 4 ]; then
     echo "Usage: sudo bash setup-part-3.sh <BACKUP_SERVER> <MYSQL_DATABASE> <MYSQL_USER> <MYSQL_PASSWORD>"
     exit 1
+fi
+
+
+# Check if .my.cnf file exists, if not create it
+if [ ! -f ~/.my.cnf ]; then
+    # Create the .my.cnf file with MySQL credentials
+    cat > ~/.my.cnf <<EOL
+[client]
+user=$MYSQL_USER
+password='$MYSQL_PASSWORD'
+host=localhost
+EOL
+
+    # Set the file permissions to restrict access
+    chmod 600 ~/.my.cnf
 fi
 
 # Check if the database exists
@@ -33,7 +48,7 @@ if [ -z "$DB_EXISTS" ]; then
     echo "The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation." >> "$LOG_FILE"
     exit 1
 else
-    mysqldump -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > $MYSQL_FILE
+    mysqldump --no-tablespaces $MYSQL_DATABASE > $MYSQL_FILE
 
     echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
 
@@ -45,8 +60,9 @@ else
 
     echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
 
-    OUTPUT=$(mysql -u$MYSQL_USER -e "use $MYSQL_DB;
+    OUTPUT=$(mysql -u$MYSQL_USER -e "use $MYSQL_DATABASE;
     SELECT option_name, option_value FROM wp_options WHERE option_name IN ('siteurl', 'home');")
+
 
     # Extract the home and siteurl values from the query output
     HOME_URL=$(echo "$OUTPUT" | grep "home" | awk '{print $2}')
@@ -55,9 +71,10 @@ else
 
     if [ "$HOME_URL" != "$CURRENT_URL" ] && [ "$SITE_URL" != "$CURRENT_URL" ]; then
         # Update the home and siteurl values in the wp_options table using the 'mysql' command-line client
-        mysql -u$MYSQL_USER -e "use $MYSQL_DB;
+        mysql -u$MYSQL_USER -e "use $MYSQL_DATABASE;
         UPDATE wp_options SET option_value = '$CURRENT_URL' WHERE option_name = 'siteurl';
         UPDATE wp_options SET option_value = '$CURRENT_URL' WHERE option_name = 'home';"
+
 
     else
 
