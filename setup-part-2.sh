@@ -107,14 +107,14 @@ CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password';
 GRANT ALL ON $db_name.* TO '$db_user'@'localhost';
 GRANT SELECT, SHOW VIEW, RELOAD, REPLICATION CLIENT, LOCK TABLES, PROCESS ON *.* TO '$db_user'@'localhost';
 FLUSH PRIVILEGES;
-exit;
+EXIT;
 EOF
 
 sudo systemctl restart nginx
 
 sudo chown -R www-data:www-data /var/www
 
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh
+curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $db_name $db_user $db_password $bs_username
 
 sudo mv setup-part-3.sh "${SYSTEM_PATH}backup.sh"
 
