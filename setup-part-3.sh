@@ -67,7 +67,7 @@ else
     fi
 
     # Set up the cron job to run the backup script every minute
-    CRON_JOB=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}${SYSTEM_PATH}backup.sh $BACKUP_SERVER $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD >> $LOG_FILE 2>&1"
+    CRON_JOB=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}${SYSTEM_PATH}backup.sh $BACKUP_SERVER $MYSQL_DATABASE $MYSQL_USER '$MYSQL_PASSWORD' >> $LOG_FILE 2>&1"
 
     # Backup the current 'ubuntu' user's crontab
     sudo crontab -u ubuntu -l > /tmp/current_crontab
