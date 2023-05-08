@@ -38,27 +38,24 @@ if [ "$#" -eq 5 ]; then
 
 fi
 
-    # Create crontab
-    sudo crontab -u ubuntu -l > /tmp/c1
+# Set up the cron job to run the Hello World script every minute
+CRON_JOB=" * * * * * $ENVIRONMENT_SHELL "${BASE_PATH}${SYSTEM_PATH}test.sh" >> $LOG_FILE 2>&1"
 
-    CRON_JOB_LINE=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}${SYSTEM_PATH}setup-part-3.sh ${BACKUP_SERVER} ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} >> ${LOG_FILE} 2>&1"
+# Backup the current 'ubuntu' user's crontab
+sudo crontab -u ubuntu -l > /tmp/current_crontab
 
-    # Remove existing similar cron jobs
-    grep -v "${BASE_PATH}${SYSTEM_PATH}setup-part-3.sh" /tmp/c1 > /tmp/c2
-    mv /tmp/c2 /tmp/c1
+# Check if the cron job already exists
+if ! grep -qF "$CRON_JOB" /tmp/current_crontab; then
+    # Add the new cron job to the temporary crontab file
+    echo "$CRON_JOB" >> /tmp/current_crontab
 
-    echo "Checking if crontab has automation for this script..." >> ${LOG_FILE}
-    # Check if the cron job line is already in the crontab
-    if ! grep -qF "$CRON_JOB_LINE" /tmp/c1; then
-        # If it's not in the crontab, append it to the temporary file
-        echo "Adding crontab automation to this script..." >> ${LOG_FILE}
-        echo "$CRON_JOB_LINE" >> /tmp/c1
+    # Install the modified crontab for the 'ubuntu' user
+    sudo crontab -u ubuntu /tmp/current_crontab
 
-        # Install the modified crontab from the temporary file for the 'ubuntu' user
-        sudo crontab -u ubuntu /tmp/c1
-    else
-        echo "The cron job is already in the crontab." >> ${LOG_FILE}
-    fi
+    echo "Cron job set up to run the Hello World script every minute."
+else
+    echo "The cron job already exists."
+fi
 
-    # Clean up the temporary files
-    rm /tmp/c1
+# Clean up the temporary file
+rm /tmp/current_crontab
