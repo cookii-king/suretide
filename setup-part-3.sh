@@ -37,19 +37,6 @@ if [ "$#" -ne 4 ]; then
     exit 1
 fi
 
-# Check if .my.cnf file exists, if not create it
-if [ ! -f ~/.my.cnf ]; then
-    # Create the .my.cnf file with MySQL credentials
-    cat > ~/.my.cnf <<EOL
-[client]
-user=$MYSQL_USER
-password='$MYSQL_PASSWORD'
-host=localhost
-EOL
-
-    # Set the file permissions to restrict access
-    chmod 600 ~/.my.cnf
-fi
 
 # Check if the database exists
 DB_EXISTS=$(mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW DATABASES LIKE '$MYSQL_DATABASE';" | grep "$MYSQL_DATABASE")
@@ -58,7 +45,8 @@ if [ -z "$DB_EXISTS" ]; then
     echo "🚫 The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation." >> "$LOG_FILE"
     exit 1
 else
-    mysqldump --no-tablespaces $MYSQL_DATABASE > $MYSQL_FILE
+    # mysqldump --no-tablespaces $MYSQL_DATABASE > $MYSQL_FILE
+    mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > "$MYSQL_FILE"
 
     echo -e "📤 Uploading MySQL backup...\nput $MYSQL_FILE\nexit" >> "$LOG_FILE" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
 
