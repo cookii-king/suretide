@@ -17,6 +17,17 @@ NGINX_DIRECTORY="/etc/nginx"
 ENVIRONMENT_SHELL="/bin/bash"
 SFTP_LINE="/usr/bin/sftp"
 
+# Calculate the length of the LOG_ENTRY_DATE_TIME text
+LOG_ENTRY_DATE_TIME="$(date +"%Y-%m-%d %H:%M:%S")"
+entry_length=${#LOG_ENTRY_DATE_TIME}
+
+# Calculate the number of spaces needed to center the text
+spaces=$(( (line_length - entry_length) / 2 ))
+
+printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " START OF LOG ENTRY " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
+printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " $LOG_ENTRY_DATE_TIME " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
+
+
 mkdir -p $BASE_PATH$SYSTEM_PATH
 
 mkdir -p $TEMP_DIRECTORY
@@ -25,7 +36,6 @@ if [ "$#" -ne 4 ]; then
     echo "Usage: sudo bash setup-part-3.sh <BACKUP_SERVER> <MYSQL_DATABASE> <MYSQL_USER> <MYSQL_PASSWORD>"
     exit 1
 fi
-
 
 # Check if .my.cnf file exists, if not create it
 if [ ! -f ~/.my.cnf ]; then
@@ -45,20 +55,20 @@ fi
 DB_EXISTS=$(mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW DATABASES LIKE '$MYSQL_DATABASE';" | grep "$MYSQL_DATABASE")
 
 if [ -z "$DB_EXISTS" ]; then
-    echo "The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation." >> "$LOG_FILE"
+    echo "🚫 The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation." >> "$LOG_FILE"
     exit 1
 else
     mysqldump --no-tablespaces $MYSQL_DATABASE > $MYSQL_FILE
 
-    echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
+    echo -e "📤 Uploading MySQL backup...\nput $MYSQL_FILE\nexit" >> "$LOG_FILE" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
 
     tar -czf "$WORDPRESS_DIRECTORY_TAR_FILE" "$WORDPRESS_DIRECTORY" >> "$LOG_FILE"
 
-    echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
+    echo -e "📤 Uploading WordPress backup...\nput $WORDPRESS_DIRECTORY_TAR_FILE\nexit" >> "$LOG_FILE" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
 
     tar -czf "$NGINX_DIRECTORY_TAR_FILE" "$NGINX_DIRECTORY" >> "$LOG_FILE"
 
-    echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
+    echo -e "📤 Uploading Nginx backup...\nput $NGINX_DIRECTORY_TAR_FILE\nexit" >> "$LOG_FILE" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
 
     OUTPUT=$(mysql -u$MYSQL_USER -e "use $MYSQL_DATABASE;
     SELECT option_name, option_value FROM wp_options WHERE option_name IN ('siteurl', 'home');")
@@ -75,11 +85,12 @@ else
         UPDATE wp_options SET option_value = '$CURRENT_URL' WHERE option_name = 'siteurl';
         UPDATE wp_options SET option_value = '$CURRENT_URL' WHERE option_name = 'home';"
 
+        echo "🔄 Updated home and siteurl values in the database." >> "$LOG_FILE"
 
     else
 
-        echo "current homeurl is: $HOME_URL" >> "$LOG_FILE"
-        echo "current siteurl is: $SITE_URL" >> "$LOG_FILE"
+        echo "ℹ️ Current homeurl is: $HOME_URL" >> "$LOG_FILE"
+        echo "ℹ️ Current siteurl is: $SITE_URL" >> "$LOG_FILE"
 
     fi
 
@@ -97,13 +108,18 @@ else
         # Install the modified crontab for the 'ubuntu' user
         sudo crontab -u ubuntu /tmp/current_crontab
 
-        echo "Cron job set up to run the backup script every minute."
+        echo "⏲️ Cron job set up to run the backup script every minute." >> "$LOG_FILE"
     else
-        echo "The cron job already exists."
+        echo "ℹ️ The cron job already exists." >> "$LOG_FILE"
     fi
 
     # Clean up the temporary file
     rm /tmp/current_crontab
 
     rm -r $TEMP_DIRECTORY
+
+    echo "✅ Backup process completed successfully!" >> "$LOG_FILE"
 fi
+
+printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " END OF LOG ENTRY " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
+printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " $LOG_ENTRY_DATE_TIME " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
