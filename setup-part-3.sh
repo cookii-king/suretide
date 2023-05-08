@@ -12,6 +12,7 @@ MYSQL_PASSWORD=""
 MYSQL_FILE="${TEMP_DIRECTORY}mysql_file.sql"
 WORDPRESS_DIRECTORY="/var/www/html/wordpress"
 NGINX_DIRECTORY="/etc/nginx"
+ENVIRONMENT_SHELL="/bin/bash"
 
 # Check if the script is called with the necessary arguments
 if [ "$#" -eq 5 ]; then
@@ -37,10 +38,10 @@ if [ "$#" -eq 5 ]; then
     # Create crontab
     sudo crontab -u ubuntu -l > /tmp/c1
 
-    CRON_JOB_LINE="* * * * * /usr/bin/env bash ${BASE_PATH}setup-part-3.sh ${BACKUP_SERVER} ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} >> ${LOG_FILE} 2>&1"
+    CRON_JOB_LINE=" * * * * * $ENVIRONMENT_SHELL ${BASE_PATH}${SYSTEM_PATH}setup-part-3.sh ${BACKUP_SERVER} ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} >> ${LOG_FILE} 2>&1"
 
     # Remove existing similar cron jobs
-    grep -v "${BASE_PATH}setup-part-3.sh" /tmp/c1 > /tmp/c2
+    grep -v "${BASE_PATH}${SYSTEM_PATH}setup-part-3.sh" /tmp/c1 > /tmp/c2
     mv /tmp/c2 /tmp/c1
 
     echo "Checking if crontab has automation for this script..." >> ${LOG_FILE}
