@@ -106,6 +106,7 @@ CREATE DATABASE $db_name DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 CREATE USER '$db_user'@'localhost' IDENTIFIED BY '$db_password';
 GRANT ALL ON $db_name.* TO '$db_user'@'localhost';
 FLUSH PRIVILEGES;
+exit;
 EOF
 
 sudo systemctl restart nginx
