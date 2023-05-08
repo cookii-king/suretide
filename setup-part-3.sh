@@ -30,20 +30,20 @@ fi
 DB_EXISTS=$(mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "SHOW DATABASES LIKE '$MYSQL_DATABASE';" | grep "$MYSQL_DATABASE")
 
 if [ -z "$DB_EXISTS" ]; then
-    echo "The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation."
+    echo "The database does not exist. Please go to http://$(curl ifconfig.me) to finish the WordPress installation." >> "$LOG_FILE"
     exit 1
 else
     mysqldump -u $MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE > $MYSQL_FILE
 
-    echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
+    echo -e "put $MYSQL_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
 
-    tar -czf "$WORDPRESS_DIRECTORY_TAR_FILE" "$WORDPRESS_DIRECTORY"
+    tar -czf "$WORDPRESS_DIRECTORY_TAR_FILE" "$WORDPRESS_DIRECTORY" >> "$LOG_FILE"
 
-    echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
+    echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
 
-    tar -czf "$NGINX_DIRECTORY_TAR_FILE" "$NGINX_DIRECTORY"
+    tar -czf "$NGINX_DIRECTORY_TAR_FILE" "$NGINX_DIRECTORY" >> "$LOG_FILE"
 
-    echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER
+    echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | $SFTP_LINE -o StrictHostKeyChecking=no -i $BACKUP_KEY $BACKUP_SERVER >> "$LOG_FILE"
 
     OUTPUT=$(mysql -u$MYSQL_USER -e "use $MYSQL_DB;
     SELECT option_name, option_value FROM wp_options WHERE option_name IN ('siteurl', 'home');")
