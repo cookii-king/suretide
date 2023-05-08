@@ -23,17 +23,8 @@ if [ "$#" -eq 5 ]; then
     mysql_user="$4"
     mysql_password="$5"
 
-    # Get the line numbers of the BACKUP_SERVER, MYSQL_DATABASE, MYSQL_USER, and MYSQL_PASSWORD variables
-    backup_server_line_number=$(grep -n "BACKUP_SERVER=" "$0" | cut -d : -f 1)
-    mysql_database_line_number=$(grep -n "MYSQL_DATABASE=" "$0" | cut -d : -f 1)
-    mysql_user_line_number=$(grep -n "MYSQL_USER=" "$0" | cut -d : -f 1)
-    mysql_password_line_number=$(grep -n "MYSQL_PASSWORD=" "$0" | cut -d : -f 1)
-
     # Update the BACKUP_SERVER, MYSQL_DATABASE, MYSQL_USER, and MYSQL_PASSWORD variables in the script
-    sed -i "${backup_server_line_number}s|BACKUP_SERVER=\"backup server\"|BACKUP_SERVER=\"${user}@${server_address}\"|" "$0"
-    sed -i "${mysql_database_line_number}s|MYSQL_DATABASE=\"database name\"|MYSQL_DATABASE=\"${database}\"|" "$0"
-    sed -i "${mysql_user_line_number}s|MYSQL_USER=\"database user\"|MYSQL_USER=\"${mysql_user}\"|" "$0"
-    sed -i "${mysql_password_line_number}s|MYSQL_PASSWORD=\"database password\"|MYSQL_PASSWORD=\"${mysql_password}\"|" "$0"
+    sudo sed -i -e "75s|BACKUP_SERVER=\"backup server\"|BACKUP_SERVER=\"${user}@${server_address}\"|" -e "76s|MYSQL_DATABASE=\"database name\"|MYSQL_DATABASE=\"${database}\"|" -e "77s|MYSQL_USER=\"database user\"|MYSQL_USER=\"${mysql_user}\"|" -e "78s|MYSQL_PASSWORD=\"database password\"|MYSQL_PASSWORD=\"${mysql_password}\"|" "$0"
 
     echo "you entered $user"
     echo "you entered $server_address"
