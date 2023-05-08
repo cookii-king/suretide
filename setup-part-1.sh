@@ -22,7 +22,7 @@ remote_destination=""
 # fi
 
 username=$(echo "$remote_server" | cut -d '@' -f 1)
-remote_destination="/home/${username}/system/"
+remote_destination="/home/ubuntu/system/"
 
 # Check if the keypair is .pem or .ppk
 key_ext="${keypair_path##*.}"
