@@ -3,7 +3,7 @@
 BASE_PATH="/home/ubuntu/"
 SYSTEM_PATH="system/"
 LOG_FILE="${BASE_PATH}${SYSTEM_PATH}suretide.log"
-BACKUP_KEY="${BASE_PATH}${SYSTEM_PATH}backup.pem"
+BACKUP_KEY="${BASE_PATH}${SYSTEM_PATH}backup.pem/"
 TEMP_DIRECTORY="${BASE_PATH}${SYSTEM_PATH}temp/"
 BACKUP_SERVER="$1"
 MYSQL_DATABASE="$2"
@@ -16,6 +16,11 @@ WORDPRESS_DIRECTORY="/var/www/html/wordpress"
 NGINX_DIRECTORY="/etc/nginx"
 ENVIRONMENT_SHELL="/bin/bash"
 SFTP_LINE="/usr/bin/sftp"
+
+mkdir -p $BASE_PATH$SYSTEM_PATH
+
+mkdir $TEMP_DIRECTORY
+
 
 if [ "$#" -ne 4 ]; then
     echo "Usage: sudo bash setup-part-3.sh <BACKUP_SERVER> <MYSQL_DATABASE> <MYSQL_USER> <MYSQL_PASSWORD>"
@@ -56,4 +61,4 @@ fi
 # Clean up the temporary file
 rm /tmp/current_crontab
 
-sudo rm -r $TEMP_DIRECTORY
+rm -r $TEMP_DIRECTORY
