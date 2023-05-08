@@ -3,25 +3,26 @@
 # Get the current user
 current_user="ubuntu"
 
-# Check if the current user is already an admin
-if groups "$current_user" | grep -q "\bsudo\b"; then
-    echo "$current_user is already an admin."
-else
-    echo "$current_user is not an admin. Granting admin privileges..."
-    if [ "$current_user" != "root" ]; then
-        # Add the current user to the sudo group
-        sudo usermod -aG sudo "$current_user"
-        echo "$current_user has been granted admin privileges."
-    else
-        echo "You are logged in as root. No need to grant admin privileges."
-    fi
-fi
+# # Check if the current user is already an admin
+# if groups "$current_user" | grep -q "\bsudo\b"; then
+#     echo "$current_user is already an admin."
+# else
+#     echo "$current_user is not an admin. Granting admin privileges..."
+#     if [ "$current_user" != "root" ]; then
+#         # Add the current user to the sudo group
+#         sudo usermod -aG sudo "$current_user"
+#         echo "$current_user has been granted admin privileges."
+#     else
+#         echo "You are logged in as root. No need to grant admin privileges."
+#     fi
+# fi
 
 # Set the base path for the script
 BASE_PATH="/home/${current_user}/"
 # Set the system folder path
 SYSTEM_PATH="system/"
 
+sudo chmod 400 "${BASE_PATH}${SYSTEM_PATH}backup.pem"
 
 # Set default values
 db_name=""
