@@ -43,17 +43,17 @@ printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " 🕒 $LOG_ENTRY_
 
 # /usr/bin/mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORDd $MYSQL_DATABASE > "$MYSQL_FILE"
 /usr/bin/mysqldump -u$MYSQL_USER $MYSQL_DATABASE > "$MYSQL_FILE"
-echo -e "put $MYSQL_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" "ubuntu@34.227.112.90" >> "$LOG_FILE"
+echo -e "put $MYSQL_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" $BACKUP_SERVER >> "$LOG_FILE"
 
 WORDPRESS_DIRECTORY_TAR_FILE="/home/ubuntu/system/wordpress_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").tar.gz"
 WORDPRESS_DIRECTORY="/var/www/html/wordpress"
 tar -czf "$WORDPRESS_DIRECTORY_TAR_FILE" "$WORDPRESS_DIRECTORY" >> "$LOG_FILE"
-echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" "ubuntu@34.227.112.90" >> "$LOG_FILE"
+echo -e "put $WORDPRESS_DIRECTORY_TAR_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" $BACKUP_SERVER >> "$LOG_FILE"
 
 NGINX_DIRECTORY_TAR_FILE="/home/ubuntu/system/nginx_backup_on_$(date +"%d_%m_%Y_at_%H_%M_%S").tar.gz"
 NGINX_DIRECTORY="/etc/nginx"
 tar -czf "$NGINX_DIRECTORY_TAR_FILE" "$NGINX_DIRECTORY" >> "$LOG_FILE"
-echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" "ubuntu@34.227.112.90" >> "$LOG_FILE"
+echo -e "put $NGINX_DIRECTORY_TAR_FILE\nexit" | /usr/bin/sftp -o StrictHostKeyChecking=no -i "/home/ubuntu/system/backup.pem" $BACKUP_SERVER >> "$LOG_FILE"
 
 echo "$MYSQL_FILE"
 cat "$LOG_FILE"
