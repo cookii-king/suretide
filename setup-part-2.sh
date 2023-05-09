@@ -50,9 +50,9 @@ sudo mv /var/www/html/index.nginx-debian.html /var/www/html/index.html
 sudo cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
 ls /var/www/html/wordpress
 
-sudo sed -i "s/define( 'MYSQL_DATABASE', 'database_name_here' );/define( 'MYSQL_DATABASE', '$MYSQL_DATABASE' );/g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s/define( 'MYSQL_USER', 'username_here' );/define( 'MYSQL_USER', '$MYSQL_USER' );/g" /var/www/html/wordpress/wp-config.php
-sudo sed -i "s/define( 'MYSQL_PASSWORD', 'password_here' );/define( 'MYSQL_PASSWORD', '$MYSQL_PASSWORD' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'DB_NAME', 'database_name_here' );/define( 'DB_NAME', '$MYSQL_DATABASE' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'DB_USER', 'username_here' );/define( 'DB_USER', '$MYSQL_USER' );/g" /var/www/html/wordpress/wp-config.php
+sudo sed -i "s/define( 'DB_PASSWORD', 'password_here' );/define( 'DB_PASSWORD', '$MYSQL_PASSWORD' );/g" /var/www/html/wordpress/wp-config.php
 
 config_file="/var/www/html/wordpress/wp-config.php"
 
