@@ -98,7 +98,7 @@ curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/diagnostic
 
 sudo mv diagnostics.sh "/home/ubuntu/system/diagnostics.sh"
 
-sudo rm -r "/home/ubuntu/system/setup-part-2.sh"
+sudo rm -r setup-part-2.sh
 
 echo "done ✅ ∙ to get rid of error just setup your wordpres and update the backup script to your liking..."
 echo "go to http://$(curl ifconfig.me) to see finish setting up your wordpress website. 😁"
