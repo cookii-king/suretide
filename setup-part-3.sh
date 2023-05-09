@@ -78,7 +78,7 @@ else
     echo "ℹ️ Current siteurl is: $SITE_URL" >> "$LOG_FILE"
 fi
 
-(crontab -l | grep -v "/home/ubuntu/system/backup.sh"; echo " * * * * * /usr/bin/bash /home/ubuntu/system/backup.sh") | sort -u | crontab -
+(crontab -l | grep -v "/home/ubuntu/system/backup.sh"; echo " * * * * * /usr/bin/bash /home/ubuntu/system/backup.sh $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $BACKUP_SERVER") | sort -u | crontab -
 
 printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " 🏁 END OF LOG ENTRY " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
 printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo -n " 🕒 $LOG_ENTRY_DATE_TIME " >> "$LOG_FILE"; printf '%*.s' $spaces '' | tr ' ' '-' >> "$LOG_FILE"; echo >> "$LOG_FILE"
