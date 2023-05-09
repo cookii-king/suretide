@@ -90,9 +90,9 @@ sudo systemctl restart nginx
 
 sudo chown -R www-data:www-data /var/www
 
-curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $MYSQL_DATABASE root $MYSQL_PASSWORD $BACKUP_SERVER
+# curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/setup-part-3.sh -o setup-part-3.sh && sudo chmod +x setup-part-3.sh && sudo bash setup-part-3.sh $MYSQL_DATABASE root $MYSQL_PASSWORD $BACKUP_SERVER
 
-sudo mv setup-part-3.sh "/home/ubuntu/system/backup.sh"
+# sudo mv setup-part-3.sh "/home/ubuntu/system/backup.sh"
 
 curl -sSL https://raw.githubusercontent.com/cookii-king/suretide/main/diagnostics.sh -o diagnostics.sh && sudo chmod +x diagnostics.sh
 
